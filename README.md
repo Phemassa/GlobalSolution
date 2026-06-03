@@ -16,6 +16,13 @@ POC para monitoramento climatico com dados de satelite, previsao com ML, modulo 
 - OpenCV/YOLO (incremental)
 - ESP32 (integracao opcional ou simulada)
 
+## Status tecnico atual
+- Ingestao de dados climaticos via Open-Meteo (com fallback sintetico)
+- Treino automatico com comparacao entre LinearRegression e RandomForestRegressor
+- Selecao do melhor modelo por MAE e persistencia dos artefatos em data/processed
+- Dashboard exibindo metricas, dataset processado, predicoes e leaderboard de modelos
+- API com endpoints de treino e predicao usando o melhor modelo salvo
+
 ## Estrutura
 - docs/: documentacao da proposta, arquitetura e backlog
 - src/: codigo fonte por dominio (api, ml, vision, dashboard, iot)

@@ -29,8 +29,9 @@ def train() -> dict:
 @app.get("/predict")
 def predict_stub() -> dict:
     processed_dir = ROOT / "data" / "processed"
-    model_path = processed_dir / "baseline_model.joblib"
+    model_path = processed_dir / "best_model.joblib"
     dataset_path = processed_dir / "training_dataset.csv"
+    metrics_path = processed_dir / "metrics.json"
 
     if not model_path.exists() or not dataset_path.exists():
         raise HTTPException(status_code=400, detail="Modelo/dataset ausentes. Execute POST /train primeiro.")
@@ -44,9 +45,17 @@ def predict_stub() -> dict:
     features = latest[FEATURE_COLUMNS].to_frame().T
     prediction = float(model.predict(features)[0])
 
+    model_name = "unknown"
+    if metrics_path.exists():
+        import json
+
+        metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+        model_name = str(metrics.get("model", "unknown"))
+
     return {
         "prediction_next_hour_temp": prediction,
         "latest_timestamp": str(latest["timestamp"]),
+        "model": model_name,
     }
 
 

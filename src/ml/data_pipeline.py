@@ -87,6 +87,16 @@ def build_training_dataset(base_dir: Path, use_api: bool = True) -> pd.DataFrame
         source_df = generate_synthetic_hourly_data()
 
     source_df = source_df.sort_values("timestamp").reset_index(drop=True)
+    source_df["hour"] = source_df["timestamp"].dt.hour
+    source_df["day_of_week"] = source_df["timestamp"].dt.dayofweek
+    source_df["is_weekend"] = source_df["day_of_week"].isin([5, 6]).astype(int)
+
+    # Features ciclicas para capturar sazonalidade diaria sem descontinuidade.
+    source_df["hour_sin"] = np.sin(2 * np.pi * source_df["hour"] / 24)
+    source_df["hour_cos"] = np.cos(2 * np.pi * source_df["hour"] / 24)
+
+    source_df["temp_lag_1"] = source_df["temperature_2m"].shift(1)
+    source_df["humidity_lag_1"] = source_df["relative_humidity_2m"].shift(1)
     source_df["target_temp_next_hour"] = source_df["temperature_2m"].shift(-1)
     source_df = source_df.dropna().reset_index(drop=True)
 

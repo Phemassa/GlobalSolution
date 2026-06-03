@@ -23,11 +23,16 @@ def test_train_baseline_outputs_artifacts(tmp_path: Path) -> None:
     model_path = Path(result["model_path"])
     metrics_path = Path(result["metrics_path"])
     predictions_path = Path(result["predictions_path"])
+    leaderboard_path = Path(result["leaderboard_path"])
 
     assert model_path.exists()
     assert metrics_path.exists()
     assert predictions_path.exists()
+    assert leaderboard_path.exists()
 
     pred_df = pd.read_csv(predictions_path)
+    leaderboard_df = pd.read_csv(leaderboard_path)
     assert not pred_df.empty
+    assert not leaderboard_df.empty
     assert {"target_real", "target_pred"}.issubset(set(pred_df.columns))
+    assert {"model", "mae"}.issubset(set(leaderboard_df.columns))
