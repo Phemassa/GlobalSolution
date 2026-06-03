@@ -11,6 +11,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.ml.train_baseline import FEATURE_COLUMNS, train_baseline
+from src.api.reporting import build_summary_report
 from src.vision.analyze_image import analyze_image_bytes
 from src.vision.history import append_vision_history, load_vision_history
 
@@ -95,6 +96,11 @@ def vision_history(limit: int = 50) -> dict:
 
     limited = history_df.sort_values("timestamp_utc", ascending=False).head(limit)
     return {"count": int(len(limited)), "items": limited.to_dict(orient="records")}
+
+
+@app.get("/report/summary")
+def report_summary() -> dict:
+    return build_summary_report(ROOT)
 
 
 if __name__ == "__main__":

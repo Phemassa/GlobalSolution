@@ -10,6 +10,7 @@ if str(ROOT) not in sys.path:
 	sys.path.insert(0, str(ROOT))
 
 from src.ml.train_baseline import train_baseline
+from src.api.reporting import build_summary_report
 from src.vision.analyze_image import analyze_image_bytes
 from src.vision.history import append_vision_history, load_vision_history
 
@@ -17,6 +18,15 @@ st.set_page_config(page_title="GS Climate Monitor", layout="wide")
 
 st.title("Global Solution 2026.1")
 st.subheader("Monitoramento Climatico Espacial - MVP")
+
+summary = build_summary_report(ROOT)
+
+st.markdown("### Resumo executivo")
+r1, r2, r3, r4 = st.columns(4)
+r1.metric("Status", str(summary.get("status", "unknown")))
+r2.metric("Modelo ativo", str(summary.get("ml", {}).get("model", "pending")))
+r3.metric("MAE", str(summary.get("ml", {}).get("mae", "n/a")))
+r4.metric("Analises de visao", int(summary.get("vision", {}).get("count", 0)))
 
 processed_dir = ROOT / "data" / "processed"
 metrics_file = processed_dir / "metrics.json"
@@ -88,3 +98,6 @@ if not history_df.empty:
 	chart_df = history_sorted[["timestamp_utc", "cloudiness_score", "rain_risk_score"]].set_index("timestamp_utc")
 	st.line_chart(chart_df)
 	st.dataframe(history_sorted.tail(20), use_container_width=True)
+
+st.markdown("### Relatorio consolidado (JSON)")
+st.json(summary)
