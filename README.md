@@ -22,6 +22,7 @@ POC para monitoramento climatico com dados de satelite, previsao com ML, modulo 
 - Selecao do melhor modelo por MAE e persistencia dos artefatos em data/processed
 - Dashboard exibindo metricas, dataset processado, predicoes e leaderboard de modelos
 - API com endpoints de treino e predicao usando o melhor modelo salvo
+- Modulo de visao computacional MVP com analise de imagem, classificacao de cobertura de nuvens e estimativa de risco de chuva
 
 ## Estrutura
 - docs/: documentacao da proposta, arquitetura e backlog

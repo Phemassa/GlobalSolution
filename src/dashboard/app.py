@@ -10,6 +10,7 @@ if str(ROOT) not in sys.path:
 	sys.path.insert(0, str(ROOT))
 
 from src.ml.train_baseline import train_baseline
+from src.vision.analyze_image import analyze_image_bytes
 
 st.set_page_config(page_title="GS Climate Monitor", layout="wide")
 
@@ -53,3 +54,22 @@ else:
 if leaderboard_file.exists():
 	st.markdown("### Comparativo de modelos")
 	st.dataframe(pd.read_csv(leaderboard_file), use_container_width=True)
+
+st.markdown("### Modulo de visao computacional (MVP)")
+uploaded_image = st.file_uploader(
+	"Envie uma imagem do ceu para estimar cobertura de nuvens e risco de chuva",
+	type=["png", "jpg", "jpeg"],
+)
+
+if uploaded_image is not None:
+	image_bytes = uploaded_image.getvalue()
+	st.image(image_bytes, caption="Imagem recebida", use_column_width=True)
+	try:
+		vision_result = analyze_image_bytes(image_bytes)
+		v1, v2, v3 = st.columns(3)
+		v1.metric("Condicao", vision_result["condition"])
+		v2.metric("Risco de chuva", f"{vision_result['rain_risk_score']}%")
+		v3.metric("Alerta", vision_result["rain_alert"])
+		st.json(vision_result)
+	except ValueError as exc:
+		st.error(f"Falha na analise da imagem: {exc}")

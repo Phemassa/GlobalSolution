@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 import pandas as pd
-from fastapi import HTTPException
+from fastapi import File, HTTPException, UploadFile
 from joblib import load
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -11,6 +11,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.ml.train_baseline import FEATURE_COLUMNS, train_baseline
+from src.vision.analyze_image import analyze_image_bytes
 
 app = FastAPI(title="GS Climate API", version="0.1.0")
 
@@ -56,6 +57,24 @@ def predict_stub() -> dict:
         "prediction_next_hour_temp": prediction,
         "latest_timestamp": str(latest["timestamp"]),
         "model": model_name,
+    }
+
+
+@app.post("/vision/analyze")
+async def vision_analyze(file: UploadFile = File(...)) -> dict:
+    image_bytes = await file.read()
+    if not image_bytes:
+        raise HTTPException(status_code=400, detail="Arquivo de imagem vazio")
+
+    try:
+        analysis = analyze_image_bytes(image_bytes)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return {
+        "filename": file.filename,
+        "content_type": file.content_type,
+        "analysis": analysis,
     }
 
 
