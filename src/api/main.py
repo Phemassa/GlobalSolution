@@ -12,6 +12,7 @@ if str(ROOT) not in sys.path:
 
 from src.ml.train_baseline import FEATURE_COLUMNS, train_baseline
 from src.vision.analyze_image import analyze_image_bytes
+from src.vision.history import append_vision_history, load_vision_history
 
 app = FastAPI(title="GS Climate API", version="0.1.0")
 
@@ -71,11 +72,29 @@ async def vision_analyze(file: UploadFile = File(...)) -> dict:
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
+    history_path = append_vision_history(
+        base_dir=ROOT,
+        source="api",
+        filename=file.filename or "unknown",
+        analysis=analysis,
+    )
+
     return {
         "filename": file.filename,
         "content_type": file.content_type,
         "analysis": analysis,
+        "history_path": str(history_path),
     }
+
+
+@app.get("/vision/history")
+def vision_history(limit: int = 50) -> dict:
+    history_df = load_vision_history(ROOT)
+    if history_df.empty:
+        return {"count": 0, "items": []}
+
+    limited = history_df.sort_values("timestamp_utc", ascending=False).head(limit)
+    return {"count": int(len(limited)), "items": limited.to_dict(orient="records")}
 
 
 if __name__ == "__main__":

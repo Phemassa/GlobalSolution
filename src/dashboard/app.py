@@ -11,6 +11,7 @@ if str(ROOT) not in sys.path:
 
 from src.ml.train_baseline import train_baseline
 from src.vision.analyze_image import analyze_image_bytes
+from src.vision.history import append_vision_history, load_vision_history
 
 st.set_page_config(page_title="GS Climate Monitor", layout="wide")
 
@@ -66,6 +67,12 @@ if uploaded_image is not None:
 	st.image(image_bytes, caption="Imagem recebida", use_column_width=True)
 	try:
 		vision_result = analyze_image_bytes(image_bytes)
+		append_vision_history(
+			base_dir=ROOT,
+			source="dashboard",
+			filename=uploaded_image.name,
+			analysis=vision_result,
+		)
 		v1, v2, v3 = st.columns(3)
 		v1.metric("Condicao", vision_result["condition"])
 		v2.metric("Risco de chuva", f"{vision_result['rain_risk_score']}%")
@@ -73,3 +80,11 @@ if uploaded_image is not None:
 		st.json(vision_result)
 	except ValueError as exc:
 		st.error(f"Falha na analise da imagem: {exc}")
+
+history_df = load_vision_history(ROOT)
+if not history_df.empty:
+	st.markdown("### Historico de analises de imagem")
+	history_sorted = history_df.sort_values("timestamp_utc")
+	chart_df = history_sorted[["timestamp_utc", "cloudiness_score", "rain_risk_score"]].set_index("timestamp_utc")
+	st.line_chart(chart_df)
+	st.dataframe(history_sorted.tail(20), use_container_width=True)
