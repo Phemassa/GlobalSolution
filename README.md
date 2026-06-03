@@ -40,6 +40,18 @@ POC para monitoramento climatico com dados de satelite, previsao com ML, modulo 
 3. Rodar dashboard: `streamlit run src/dashboard/app.py`
 4. Rodar API: `python src/api/main.py`
 
+## Demo rapida (para gravacao)
+1. Execute: `bash scripts/demo_run.sh`
+2. Suba API: `source .venv/bin/activate && python src/api/main.py`
+3. Suba dashboard: `source .venv/bin/activate && streamlit run src/dashboard/app.py`
+4. No dashboard, rode treino e envie uma imagem para o modulo de visao.
+5. Consulte o resumo consolidado em `GET /report/summary`.
+
+## Diagramas para o PDF
+- docs/diagramas/ARQUITETURA_MVP.md
+- docs/diagramas/PIPELINE_DADOS.md
+- docs/diagramas/PIPELINE_VISAO.md
+
 ## Entregaveis academicos
 - Video (YouTube nao listado) com ate 5 min
 - PDF unico com Introducao, Desenvolvimento, Resultados Esperados e Conclusoes
