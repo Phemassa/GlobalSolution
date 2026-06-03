@@ -26,6 +26,7 @@ POC para monitoramento climatico com dados de satelite, previsao com ML, modulo 
 - Historico de analises de imagem (CSV) com grafico temporal de cobertura de nuvens e risco de chuva no dashboard
 - Endpoint de relatorio consolidado (GET /report/summary) para demonstracao da banca
 - Guias de entrega criados em docs/VIDEO_ROTEIRO.md e docs/PDF_ENTREGA_TEMPLATE.md
+- Guias finais de fechamento em docs/ENTREGA_CHECKLIST.md e docs/APRESENTACAO_5MIN.md
 
 ## Estrutura
 - docs/: documentacao da proposta, arquitetura e backlog
@@ -56,6 +57,10 @@ POC para monitoramento climatico com dados de satelite, previsao com ML, modulo 
 - Video (YouTube nao listado) com ate 5 min
 - PDF unico com Introducao, Desenvolvimento, Resultados Esperados e Conclusoes
 - Repositorio organizado e documentado
+
+## Guias de fechamento
+- docs/ENTREGA_CHECKLIST.md
+- docs/APRESENTACAO_5MIN.md
 
 ## Historico de lancamentos
 - 0.1.0 - scaffold inicial do projeto e backlog Scrum

@@ -8,6 +8,8 @@ Este diretorio centraliza a documentacao tecnica e academica da Global Solution.
 - BACKLOG_SCRUM.md: backlog detalhado por epics/historias/tasks
 - VIDEO_ROTEIRO.md: roteiro para gravacao do video de ate 5 minutos
 - PDF_ENTREGA_TEMPLATE.md: estrutura sugerida para o PDF final
+- ENTREGA_CHECKLIST.md: checklist final para submissao sem pendencias
+- APRESENTACAO_5MIN.md: guia cronometrado da apresentacao final
 
 ## Diagramas
 - docs/diagramas/ARQUITETURA_MVP.md
