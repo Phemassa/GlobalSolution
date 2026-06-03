@@ -1,0 +1,8 @@
+git deste projeto:https://github.com/Phemassa/GlobalSolution
+referencias para o projeto
+
+fase 1 e 2 https://github.com/Phemassa/FarmTechSolutions
+fase 3 https://github.com/Phemassa/fiap-farmtech-fase3
+fase 4 https://github.com/Phemassa/fiap-farmtech-fase4
+fase 5 https://github.com/Phemassa/FarmTech-FASE-5-cap1-2026
+fase 6 https://github.com/Phemassa/Cap_1_Rede_Neural
