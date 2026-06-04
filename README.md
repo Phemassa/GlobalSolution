@@ -43,10 +43,12 @@ POC para monitoramento climatico com dados de satelite, previsao com ML, modulo 
 
 ## Demo rapida (para gravacao)
 1. Execute: `bash scripts/demo_run.sh`
-2. Suba API: `source .venv/bin/activate && python src/api/main.py`
-3. Suba dashboard: `source .venv/bin/activate && streamlit run src/dashboard/app.py`
-4. No dashboard, rode treino e envie uma imagem para o modulo de visao.
-5. Consulte o resumo consolidado em `GET /report/summary`.
+2. Opcional (one-click): `bash scripts/run_demo_stack.sh` para subir API e dashboard juntos
+3. Para encerrar os dois servicos, pressione `Ctrl+C` no terminal do script
+4. Suba API manualmente: `source .venv/bin/activate && python src/api/main.py`
+5. Suba dashboard manualmente: `source .venv/bin/activate && streamlit run src/dashboard/app.py`
+6. No dashboard, rode treino e envie uma imagem para o modulo de visao.
+7. Consulte o resumo consolidado em `GET /report/summary`.
 
 ## Diagramas para o PDF
 - docs/diagramas/ARQUITETURA_MVP.md
