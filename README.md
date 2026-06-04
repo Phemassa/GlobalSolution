@@ -50,6 +50,11 @@ POC para monitoramento climatico com dados de satelite, previsao com ML, modulo 
 6. No dashboard, rode treino e envie uma imagem para o modulo de visao.
 7. Consulte o resumo consolidado em `GET /report/summary`.
 
+## Smoke test rapido da API (pre-demo)
+1. Execute: `bash scripts/smoke_demo.sh`
+2. O script valida, em sequencia: `GET /health`, `POST /train`, `GET /predict` e `GET /report/summary`.
+3. Se a API nao estiver ativa, o script sobe uma instancia local automaticamente e encerra ao final.
+
 ## Diagramas para o PDF
 - docs/diagramas/ARQUITETURA_MVP.md
 - docs/diagramas/PIPELINE_DADOS.md
