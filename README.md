@@ -1,132 +1,127 @@
-# FIAP - Faculdade de Informática e Administração Paulista
-
 <p align="center">
-<a href="https://www.fiap.com.br/"><img src="https://upload.wikimedia.org/wikipedia/commons/6/68/Logo_FIAP.png" alt="FIAP - Faculdade de Informática e Administração Paulista" border="0" width="40%" height="40%"></a>
+	<a href="https://www.fiap.com.br/">
+		<img src="assets/logo-fiap.png" alt="FIAP - Faculdade de Informatica e Administracao Paulista" width="260"/>
+	</a>
 </p>
 
-<br>
+# Global Solution 2026.1 - Monitoramento Climatico Espacial
 
-# 🎓 Graduação ON em Inteligência Artificial  
-## 📚 Global Solution 2026.1 - Monitoramento Climático Espacial
+## Integrantes
 
----
-
-## 👩🏻‍💻 Sobre este Repositório
-
-Este repositório concentra a entrega da **Global Solution 2026.1**, com foco em como IA e tecnologias digitais podem transformar a economia espacial e gerar impacto positivo na Terra.
-
-A solução proposta implementa uma POC de monitoramento climático com:
-
-- Ingestão de dados meteorológicos (Open-Meteo, com fallback sintético)
-- Pipeline de Machine Learning para previsão
-- Módulo de visão computacional para análise de imagens
-- API para treino, predição e relatório consolidado
-- Dashboard operacional para acompanhamento de métricas e histórico
-
-Este material funciona como documentação técnica e evidência de evolução do projeto para avaliação acadêmica.
+| Nome | RM | LinkedIn |
+|------|----|----------|
+| Phellype Matheus Giacoia Flaibam Massarente | RM566826 | [LinkedIn](https://www.linkedin.com/in/phellype-massarente-13739810a/) |
+| Carlos Alberto Florindo Costato | RM567005 | [LinkedIn](https://www.linkedin.com/in/carlos-costato/) |
+| Cesar Martinho de Azeredo | RM568140 | [LinkedIn](https://www.linkedin.com/in/cesar-azeredo) |
 
 ---
 
-## 🎯 Objetivo
+## Sobre o projeto
 
-Organizar e versionar todo o fluxo de desenvolvimento da entrega, garantindo:
+Este repositorio apresenta a entrega da Global Solution 2026.1 com uma POC de monitoramento climatico baseada em tres pilares:
 
-- 📌 Rastreabilidade de decisões técnicas
-- 📌 Reprodutibilidade dos experimentos
-- 📌 Clareza na arquitetura e no pipeline de dados
-- 📌 Demonstração prática (API + dashboard + visão)
-- 📌 Material de suporte para vídeo e PDF final
+- Pipeline de Machine Learning para previsao de temperatura
+- Visao computacional para classificacao de cobertura de nuvens e risco de chuva
+- API + Dashboard para operacao, analise e demonstracao para banca
 
----
-
-## 👥 Integrantes
-
-- Cesar Martinho de Azeredo - RM568140
-- Carlos Alberto Florindo Costato - RM567005
-- Phellype Matheus Giacoia Flaibam Massarente - RM566826
+O objetivo e demonstrar um fluxo completo de dados e IA: ingestao, preparo, treino, inferencia, visualizacao e relatorio consolidado.
 
 ---
 
-## 🧠 Estrutura Macro do Repositório
+## Cobertura dos temas propostos (sem AWS)
+
+| Tema proposto | Status no projeto | Evidencia atual |
+|---|---|---|
+| Sistemas inteligentes de monitoramento climatico com dados espaciais | Ja temos | Pipeline com Open-Meteo + previsao + dashboard |
+| Visao computacional para analise de imagens orbitais | Parcial | Analise de imagens do ceu com classificacao de condicao e risco |
+| Redes neurais para previsao de eventos/clima/agro | Nao temos ainda | Baseline atual usa LinearRegression e RandomForestRegressor |
+| Plataforma cognitiva para grandes volumes de dados espaciais | Parcial | Relatorio consolidado e API, sem camada de processamento distribuido |
+| Sistemas autonomos e sensores inteligentes para ambientes extremos | Parcial | Arquitetura preparada; integracao IoT real ainda nao implementada |
+| Aplicacoes em nuvem integradas a dados de satelite | Parcial | Integracao com API externa de clima, sem deploy cloud dedicado |
+| Plataforma de recomendacao e analise preditiva | Parcial | Analise preditiva implementada; recomendacao ainda nao implementada |
+| Deteccao, classificacao e segmentacao de objetos | Parcial | Classificacao simplificada; sem deteccao/segmentacao de objetos |
+| IoT e ESP32 para monitoramento remoto | Nao temos ainda | Modulo iot criado, aguardando implementacao de telemetria real |
+| Solucoes sustentaveis inspiradas na exploracao espacial | Ja temos | Proposta e MVP focados em monitoramento climatico espacial |
+
+### Proximos incrementos tecnicos
+
+1. Integrar ESP32 real para telemetria (temperatura, umidade, chuva) via API.
+2. Evoluir visao para deteccao de objetos/nuvens com modelo supervisionado.
+3. Adicionar modelo de rede neural para serie temporal e comparar com baseline atual.
+4. Publicar stack em cloud com pipeline de deploy e observabilidade.
+
+---
+
+## Demonstracao em video
+
+- Roteiro: [docs/VIDEO_ROTEIRO.md](docs/VIDEO_ROTEIRO.md)
+- Link final do YouTube (nao listado): pendente de publicacao
+
+---
+
+## Documentacao tecnica
+
+- [docs/PROPOSTA.md](docs/PROPOSTA.md)
+- [docs/ARQUITETURA.md](docs/ARQUITETURA.md)
+- [docs/BACKLOG_SCRUM.md](docs/BACKLOG_SCRUM.md)
+- [docs/README.md](docs/README.md)
+- [docs/diagramas/ARQUITETURA_MVP.md](docs/diagramas/ARQUITETURA_MVP.md)
+- [docs/diagramas/PIPELINE_DADOS.md](docs/diagramas/PIPELINE_DADOS.md)
+- [docs/diagramas/PIPELINE_VISAO.md](docs/diagramas/PIPELINE_VISAO.md)
+- [docs/EVIDENCIAS.md](docs/EVIDENCIAS.md)
+
+---
+
+## Estrutura de pastas
 
 ```bash
-📂 GlobalSolution
-│
-├── 📂 assets
-├── 📂 data
-│   ├── 📂 raw
-│   ├── 📂 synthetic
-│   └── 📂 processed
-├── 📂 docs
-│   └── 📂 diagramas
-├── 📂 scripts
-├── 📂 src
-│   ├── 📂 api
-│   ├── 📂 dashboard
-│   ├── 📂 ml
-│   ├── 📂 vision
-│   └── 📂 iot
-├── 📂 tests
+GlobalSolution/
+├── assets/
+├── data/
+│   ├── raw/
+│   ├── synthetic/
+│   └── processed/
+├── docs/
+├── scripts/
+├── src/
+│   ├── api/
+│   ├── dashboard/
+│   ├── ml/
+│   ├── vision/
+│   └── iot/
+├── tests/
 ├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## ⚙️ Stack do MVP
+## Como executar
 
-- Python
-- Streamlit
-- Scikit-learn
-- OpenCV/YOLO (incremental)
-- ESP32 (integração opcional/simulada)
-
----
-
-## 🚀 Como Executar
-
-1. Criar ambiente virtual Python 3.10+
-2. Instalar dependências:
+1. Criar e ativar ambiente virtual Python 3.10+.
+2. Instalar dependencias.
+3. Subir API e dashboard.
 
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
-```
 
-3. Subir API:
-
-```bash
 python src/api/main.py
-```
-
-4. Subir dashboard:
-
-```bash
 streamlit run src/dashboard/app.py
 ```
 
 ---
 
-## 🎬 Demo Rápida (Banca)
-
-1. Rodar fluxo principal:
+## Demo rapida para banca
 
 ```bash
 bash scripts/demo_run.sh
-```
-
-2. Opcional (API + dashboard juntos):
-
-```bash
 bash scripts/run_demo_stack.sh
-```
-
-3. Smoke test da API antes da apresentação:
-
-```bash
 bash scripts/smoke_demo.sh
 ```
 
-4. Endpoint de resumo consolidado:
+Endpoint principal de resumo:
 
 ```text
 GET /report/summary
@@ -134,21 +129,20 @@ GET /report/summary
 
 ---
 
-## 📦 Entregáveis Acadêmicos
+## Entregaveis academicos
 
-- Vídeo (YouTube não listado) com até 5 minutos
-- PDF único com Introdução, Desenvolvimento, Resultados Esperados e Conclusões
-- Repositório organizado e documentado
+- Video (YouTube nao listado) com ate 5 minutos
+- PDF unico com introducao, desenvolvimento, resultados esperados e conclusoes
+- Repositorio organizado, testado e documentado
 
-Materiais de apoio:
+Guias de fechamento:
 
-- docs/VIDEO_ROTEIRO.md
-- docs/PDF_ENTREGA_TEMPLATE.md
-- docs/ENTREGA_CHECKLIST.md
-- docs/APRESENTACAO_5MIN.md
+- [docs/ENTREGA_CHECKLIST.md](docs/ENTREGA_CHECKLIST.md)
+- [docs/APRESENTACAO_5MIN.md](docs/APRESENTACAO_5MIN.md)
+- [docs/PDF_ENTREGA_TEMPLATE.md](docs/PDF_ENTREGA_TEMPLATE.md)
 
 ---
 
-## 📋 Licença
+## Licenca
 
-Uso acadêmico FIAP.
+Uso academico FIAP.

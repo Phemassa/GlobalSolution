@@ -17,6 +17,8 @@ import re
 import sys
 from pathlib import Path
 
+import cv2
+
 ROOT = Path(__file__).resolve().parents[1]
 MD_PATH   = ROOT / "docs" / "EVIDENCIAS.md"
 IMG_DIR   = ROOT / "assets" / "evidencias"
@@ -360,13 +362,32 @@ def generate(blocks: list[dict]) -> None:
             if pdf.get_y() > pdf.h - 80:
                 new_page()
 
-            # largura maxima: 75% da pagina; altura proporcional
-            img_w = UW * 0.92
+            # dimensiona imagem para caber na pagina e evita sobreposicao
+            target_w = UW * 0.92
+            reserve_h = 12  # margem para legenda/respiracao
+            available_h = pdf.h - pdf.b_margin - pdf.get_y() - reserve_h
+
+            if available_h < 40:
+                new_page()
+                available_h = pdf.h - pdf.b_margin - pdf.get_y() - reserve_h
+
+            img_w = target_w
+            img_h_expected = None
+
+            img_mat = cv2.imread(str(img_path))
+            if img_mat is not None:
+                h_px, w_px = img_mat.shape[:2]
+                if w_px > 0 and h_px > 0:
+                    img_h_expected = target_w * (h_px / w_px)
+                    if img_h_expected > available_h:
+                        img_w = available_h * (w_px / h_px)
+
             pdf.set_x(pdf.l_margin + (UW - img_w) / 2)
             try:
-                pdf.image(str(img_path), x=pdf.get_x(), y=pdf.get_y(), w=img_w)
-                # avanca Y manualmente (fpdf2 avanca apos image)
-                ln(2)
+                y_before = pdf.get_y()
+                image_info = pdf.image(str(img_path), x=pdf.get_x(), y=y_before, w=img_w)
+                rendered_h = getattr(image_info, "rendered_height", img_h_expected or 0)
+                pdf.set_y(y_before + rendered_h + 2)
             except Exception as exc:
                 pdf.set_font("Helvetica", "I", 9)
                 pdf.set_text_color(*MUTED)

@@ -338,14 +338,13 @@ mae_disp = ml_block.get("mae")
 k3.metric("MAE", f"{mae_disp:.3f}" if isinstance(mae_disp, (int, float)) else "n/a", help="Erro medio absoluto na temperatura prevista (graus C).")
 k4.metric("Análises de visão", int(vision_block.get("count", 0)), help="Quantidade de imagens analisadas e gravadas no historico.")
 
-tab_intro, tab_ml, tab_vision, tab_api, tab_report, tab_pdf = st.tabs(
+tab_intro, tab_ml, tab_vision, tab_api, tab_report = st.tabs(
 	[
 		"01 · Visão Geral",
 		"02 · ML & Predições",
 		"03 · Visão Computacional",
 		"04 · API & Stack",
 		"05 · Relatório",
-		"06 · PDF de Entrega",
 	]
 )
 
@@ -661,104 +660,6 @@ with tab_report:
 		mime="application/json",
 		help="Baixa o snapshot atual do /report/summary para anexar ao PDF de entrega.",
 	)
-
-with tab_pdf:
-	st.markdown('<div class="section-title"><span class="num">6</span> PDF de entrega</div>', unsafe_allow_html=True)
-	st.markdown(
-		"""
-		<div class="script">
-			<span class="label">Tutorial · Pós-gravação · PDF de entrega</span>
-			<div class="quote">
-				Apos gravar e publicar o video, preencha os campos abaixo e clique em <em>Gerar PDF</em>. O documento sai pronto com a estrutura exigida pela banca: integrantes, frase opcional <em>QUERO CONCORRER</em>, Introducao, Desenvolvimento, Resultados Esperados, Conclusoes, snapshot do relatorio consolidado e link do video ao final.
-			</div>
-			<ul>
-				<li>Preencha os <em>integrantes</em> (um por linha) e marque <em>QUERO CONCORRER</em> se for o caso.</li>
-				<li>Cole o <em>link do video</em> (YouTube nao listado).</li>
-				<li>Edite os textos pre-preenchidos de Introducao / Desenvolvimento / Resultados / Conclusoes.</li>
-				<li>Clique em <em>Gerar PDF</em> e baixe o arquivo.</li>
-			</ul>
-		</div>
-		""",
-		unsafe_allow_html=True,
-	)
-
-	default_intro = (
-		"Este projeto entrega um MVP de monitoramento climatico espacial com tres pilares: (1) pipeline de Machine Learning para previsao de temperatura horaria a partir de dados meteorologicos publicos (Open-Meteo), com selecao automatica do melhor modelo por MAE; (2) modulo de Visao Computacional que analisa imagens do ceu e estima cobertura de nuvens, risco de chuva e alerta operacional; (3) API FastAPI que expoe treino, predicao, analise de imagem e um relatorio consolidado para integracao com outros sistemas, incluindo dispositivos IoT como ESP32. "
-		"O dashboard Streamlit centraliza a apresentacao em um portal autocontido, com tooltips, exemplos sinteticos embutidos e geracao deste proprio PDF de entrega."
-	)
-	default_dev = (
-		"Arquitetura e decisoes principais:\n"
-		"- Linguagem: Python 3.10+. Stack: pandas, numpy, scikit-learn, OpenCV, FastAPI, Streamlit, fpdf2.\n"
-		"- Pipeline ML (src/ml/train_baseline.py): ingestao via Open-Meteo (com fallback sintetico), criacao de features, split temporal, treino de LinearRegression e RandomForestRegressor, selecao por MAE, persistencia de modelo, dataset, predicoes, leaderboard e metricas em data/processed.\n"
-		"- Visao Computacional (src/vision/analyze_image.py): conversao BGR->Gray/HSV, brilho, contraste, saturacao e densidade de bordas (Canny). Combinacao linear ponderada gera scores de cobertura e risco de chuva e classifica condicao (clear/partly_cloudy/overcast) e alerta (low/moderate/high). Historico em CSV alimenta grafico temporal.\n"
-		"- API (src/api/main.py): /health, /train, /predict, /vision/analyze, /vision/history, /report/summary. O /report/summary consolida estado do pipeline + ultima predicao + resumo da visao para a banca.\n"
-		"- Dashboard (src/dashboard/app.py): tema dark espacial customizado (.streamlit/config.toml), abas numeradas 01-06, tooltips em cada acao, exemplo sinteticos embutido em Visao Computacional e gerador de PDF de entrega autocontido.\n"
-		"- Automacao: scripts/run_demo_stack.sh sobe API e Dashboard juntos; scripts/smoke_demo.sh valida endpoints chave antes da gravacao."
-	)
-	default_resultados = (
-		"O MVP demonstra:\n"
-		"- Previsao horaria de temperatura com MAE inferior a 1 grau C nos cenarios validados.\n"
-		"- Classificacao de condicao do ceu e estimativa de risco de chuva a partir de imagens, com historico temporal acumulado.\n"
-		"- Relatorio consolidado em JSON consumivel por outros sistemas, viabilizando integracao com IoT (ESP32) e servicos cloud.\n"
-		"- Portal autocontido para apresentacao em 5 minutos, sem dependencias externas durante a demo."
-	)
-	default_conclusoes = (
-		"O grupo entrega uma POC funcional que une dados, ML, visao computacional e API em uma experiencia integrada. "
-		"Como proximos passos: integrar IoT real (ESP32 com sensores ambientais), ampliar a base com dados satelitais adicionais e fazer deploy em cloud (AWS/GCP) com pipeline de CI/CD. "
-		"A arquitetura modular facilita a evolucao incremental sem retrabalho."
-	)
-
-	with st.form("pdf_form"):
-		col1, col2 = st.columns(2)
-		with col1:
-			integrantes_raw = st.text_area(
-				"Integrantes (um por linha, com nome completo)",
-				height=120,
-				placeholder="Nome Sobrenome - RM000000\nNome Sobrenome - RM000000",
-				help="Nomes que aparecerao na primeira pagina do PDF.",
-			)
-			quero_concorrer = st.checkbox(
-				"Incluir frase QUERO CONCORRER",
-				value=False,
-				help="Marque se o grupo deseja concorrer ao podio.",
-			)
-			video_url = st.text_input(
-				"Link do video (YouTube nao listado)",
-				placeholder="https://youtu.be/...",
-				help="Sera incluido na ultima pagina do PDF.",
-			)
-		with col2:
-			intro_text = st.text_area("1. Introducao", value=default_intro, height=160)
-			dev_text = st.text_area("2. Desenvolvimento", value=default_dev, height=200)
-
-		res_text = st.text_area("3. Resultados Esperados", value=default_resultados, height=140)
-		conc_text = st.text_area("5. Conclusoes", value=default_conclusoes, height=140)
-
-		submitted = st.form_submit_button(
-			"Gerar PDF",
-			help="Cria o PDF com a estrutura exigida (integrantes, QUERO CONCORRER opcional, Introducao, Desenvolvimento, Resultados, Conclusoes, snapshot e link do video).",
-		)
-
-	if submitted:
-		integrantes = [linha.strip() for linha in (integrantes_raw or "").splitlines() if linha.strip()]
-		with st.spinner("Gerando PDF..."):
-			pdf_bytes = build_delivery_pdf(
-				integrantes=integrantes,
-				quero_concorrer=quero_concorrer,
-				video_url=video_url,
-				intro=intro_text,
-				desenvolvimento=dev_text,
-				resultados=res_text,
-				conclusoes=conc_text,
-				summary=summary,
-			)
-		st.success("PDF gerado com sucesso.")
-		st.download_button(
-			"Baixar PDF de entrega",
-			data=pdf_bytes,
-			file_name="GS2026_entrega.pdf",
-			mime="application/pdf",
-		)
 
 st.markdown(
 	"<div class='small' style='text-align:center; margin-top:24px;'>FIAP · Global Solution 2026.1 · MVP de monitoramento climático</div>",

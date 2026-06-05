@@ -13,10 +13,9 @@
 - Cesar Martinho de Azeredo – RM568140
 - Carlos Alberto Florindo Costato – RM567005
 - Phellype Matheus Giacoia Flaibam Massarente – RM566826
-
+> **QUERO CONCORRER**
 ---
 
-> **Nota:** Caso o grupo deseje concorrer ao pódio, inserir a frase **"QUERO CONCORRER"** nesta página, logo após o nome dos integrantes.
 
 ---
 
