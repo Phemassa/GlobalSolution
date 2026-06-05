@@ -1,7 +1,9 @@
 # Global Solution 2026.1 - Monitoramento Climatico Espacial
 
 ## Grupo
-- Preencher nomes dos integrantes
+- Cesar Martinho de Azeredo – RM568140
+- Carlos Alberto Florindo Costato – RM567005
+- Phellype Matheus Giacoia Flaibam Massarente – RM566826
 
 ## Desafio
 Como IA e tecnologias digitais podem transformar a economia espacial e gerar impacto positivo na Terra.
