@@ -1,78 +1,154 @@
-# Global Solution 2026.1 - Monitoramento Climatico Espacial
+# FIAP - Faculdade de Informática e Administração Paulista
 
-## Grupo
-- Cesar Martinho de Azeredo – RM568140
-- Carlos Alberto Florindo Costato – RM567005
-- Phellype Matheus Giacoia Flaibam Massarente – RM566826
+<p align="center">
+<a href="https://www.fiap.com.br/"><img src="https://upload.wikimedia.org/wikipedia/commons/6/68/Logo_FIAP.png" alt="FIAP - Faculdade de Informática e Administração Paulista" border="0" width="40%" height="40%"></a>
+</p>
 
-## Desafio
-Como IA e tecnologias digitais podem transformar a economia espacial e gerar impacto positivo na Terra.
+<br>
 
-## Solucao proposta
-POC para monitoramento climatico com dados de satelite, previsao com ML, modulo de visao computacional para analise de imagens e dashboard para acompanhamento operacional.
+# 🎓 Graduação ON em Inteligência Artificial  
+## 📚 Global Solution 2026.1 - Monitoramento Climático Espacial
 
-## Stack do MVP
+---
+
+## 👩🏻‍💻 Sobre este Repositório
+
+Este repositório concentra a entrega da **Global Solution 2026.1**, com foco em como IA e tecnologias digitais podem transformar a economia espacial e gerar impacto positivo na Terra.
+
+A solução proposta implementa uma POC de monitoramento climático com:
+
+- Ingestão de dados meteorológicos (Open-Meteo, com fallback sintético)
+- Pipeline de Machine Learning para previsão
+- Módulo de visão computacional para análise de imagens
+- API para treino, predição e relatório consolidado
+- Dashboard operacional para acompanhamento de métricas e histórico
+
+Este material funciona como documentação técnica e evidência de evolução do projeto para avaliação acadêmica.
+
+---
+
+## 🎯 Objetivo
+
+Organizar e versionar todo o fluxo de desenvolvimento da entrega, garantindo:
+
+- 📌 Rastreabilidade de decisões técnicas
+- 📌 Reprodutibilidade dos experimentos
+- 📌 Clareza na arquitetura e no pipeline de dados
+- 📌 Demonstração prática (API + dashboard + visão)
+- 📌 Material de suporte para vídeo e PDF final
+
+---
+
+## 👥 Integrantes
+
+- Cesar Martinho de Azeredo - RM568140
+- Carlos Alberto Florindo Costato - RM567005
+- Phellype Matheus Giacoia Flaibam Massarente - RM566826
+
+---
+
+## 🧠 Estrutura Macro do Repositório
+
+```bash
+📂 GlobalSolution
+│
+├── 📂 assets
+├── 📂 data
+│   ├── 📂 raw
+│   ├── 📂 synthetic
+│   └── 📂 processed
+├── 📂 docs
+│   └── 📂 diagramas
+├── 📂 scripts
+├── 📂 src
+│   ├── 📂 api
+│   ├── 📂 dashboard
+│   ├── 📂 ml
+│   ├── 📂 vision
+│   └── 📂 iot
+├── 📂 tests
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## ⚙️ Stack do MVP
+
 - Python
 - Streamlit
 - Scikit-learn
 - OpenCV/YOLO (incremental)
-- ESP32 (integracao opcional ou simulada)
+- ESP32 (integração opcional/simulada)
 
-## Status tecnico atual
-- Ingestao de dados climaticos via Open-Meteo (com fallback sintetico)
-- Treino automatico com comparacao entre LinearRegression e RandomForestRegressor
-- Selecao do melhor modelo por MAE e persistencia dos artefatos em data/processed
-- Dashboard exibindo metricas, dataset processado, predicoes e leaderboard de modelos
-- API com endpoints de treino e predicao usando o melhor modelo salvo
-- Modulo de visao computacional MVP com analise de imagem, classificacao de cobertura de nuvens e estimativa de risco de chuva
-- Historico de analises de imagem (CSV) com grafico temporal de cobertura de nuvens e risco de chuva no dashboard
-- Endpoint de relatorio consolidado (GET /report/summary) para demonstracao da banca
-- Guias de entrega criados em docs/VIDEO_ROTEIRO.md e docs/PDF_ENTREGA_TEMPLATE.md
-- Guias finais de fechamento em docs/ENTREGA_CHECKLIST.md e docs/APRESENTACAO_5MIN.md
+---
 
-## Estrutura
-- docs/: documentacao da proposta, arquitetura e backlog
-- src/: codigo fonte por dominio (api, ml, vision, dashboard, iot)
-- data/: dados brutos, processados e sinteticos
-- tests/: testes iniciais
-- scripts/: scripts de setup e automacao
+## 🚀 Como Executar
 
-## Como executar (baseline)
 1. Criar ambiente virtual Python 3.10+
-2. Instalar dependencias: `pip install -r requirements.txt`
-3. Rodar dashboard: `streamlit run src/dashboard/app.py`
-4. Rodar API: `python src/api/main.py`
+2. Instalar dependências:
 
-## Demo rapida (para gravacao)
-1. Execute: `bash scripts/demo_run.sh`
-2. Opcional (one-click): `bash scripts/run_demo_stack.sh` para subir API e dashboard juntos
-3. Para encerrar os dois servicos, pressione `Ctrl+C` no terminal do script
-4. Suba API manualmente: `source .venv/bin/activate && python src/api/main.py`
-5. Suba dashboard manualmente: `source .venv/bin/activate && streamlit run src/dashboard/app.py`
-6. No dashboard, rode treino e envie uma imagem para o modulo de visao.
-7. Consulte o resumo consolidado em `GET /report/summary`.
+```bash
+pip install -r requirements.txt
+```
 
-## Smoke test rapido da API (pre-demo)
-1. Execute: `bash scripts/smoke_demo.sh`
-2. O script valida, em sequencia: `GET /health`, `POST /train`, `GET /predict` e `GET /report/summary`.
-3. Se a API nao estiver ativa, o script sobe uma instancia local automaticamente e encerra ao final.
+3. Subir API:
 
-## Diagramas para o PDF
-- docs/diagramas/ARQUITETURA_MVP.md
-- docs/diagramas/PIPELINE_DADOS.md
-- docs/diagramas/PIPELINE_VISAO.md
+```bash
+python src/api/main.py
+```
 
-## Entregaveis academicos
-- Video (YouTube nao listado) com ate 5 min
-- PDF unico com Introducao, Desenvolvimento, Resultados Esperados e Conclusoes
-- Repositorio organizado e documentado
+4. Subir dashboard:
 
-## Guias de fechamento
+```bash
+streamlit run src/dashboard/app.py
+```
+
+---
+
+## 🎬 Demo Rápida (Banca)
+
+1. Rodar fluxo principal:
+
+```bash
+bash scripts/demo_run.sh
+```
+
+2. Opcional (API + dashboard juntos):
+
+```bash
+bash scripts/run_demo_stack.sh
+```
+
+3. Smoke test da API antes da apresentação:
+
+```bash
+bash scripts/smoke_demo.sh
+```
+
+4. Endpoint de resumo consolidado:
+
+```text
+GET /report/summary
+```
+
+---
+
+## 📦 Entregáveis Acadêmicos
+
+- Vídeo (YouTube não listado) com até 5 minutos
+- PDF único com Introdução, Desenvolvimento, Resultados Esperados e Conclusões
+- Repositório organizado e documentado
+
+Materiais de apoio:
+
+- docs/VIDEO_ROTEIRO.md
+- docs/PDF_ENTREGA_TEMPLATE.md
 - docs/ENTREGA_CHECKLIST.md
 - docs/APRESENTACAO_5MIN.md
 
-## Historico de lancamentos
-- 0.1.0 - scaffold inicial do projeto e backlog Scrum
+---
 
-## Licenca
-Uso academico FIAP.
+## 📋 Licença
+
+Uso acadêmico FIAP.
