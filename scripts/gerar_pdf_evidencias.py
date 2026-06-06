@@ -149,32 +149,93 @@ def generate(blocks: list[dict]) -> None:
     from fpdf import FPDF
     from fpdf.enums import XPos, YPos
 
-    pdf = FPDF(format="A4", unit="mm")
-    pdf.set_auto_page_break(auto=True, margin=20)
+    ACCENT = (99, 87, 232)
+    DARK = (20, 26, 51)
+    MUTED = (88, 100, 132)
+    BLACK = (35, 40, 52)
+    CODE_BG = (243, 246, 255)
+    CODE_TEXT = (56, 66, 92)
+
+    class EvidencePDF(FPDF):
+        def header(self) -> None:
+            self.set_fill_color(*DARK)
+            self.rect(0, 0, self.w, 8, "F")
+            self.set_font("Helvetica", "I", 7)
+            self.set_text_color(*MUTED)
+            self.set_xy(self.l_margin, 1.5)
+            self.cell(0, 5, c("FIAP . Global Solution 2026.1 . Monitoramento Climatico Espacial"))
+            self.set_text_color(*BLACK)
+            if self.get_y() < 12:
+                self.set_y(12)
+
+        def footer(self) -> None:
+            self.set_y(-12)
+            self.set_font("Helvetica", "I", 8)
+            self.set_text_color(*MUTED)
+            uw = self.w - self.l_margin - self.r_margin
+            self.set_x(self.l_margin)
+            self.cell(uw / 2, 5, c("FIAP . Global Solution 2026.1 . Analise e Desenvolvimento de Sistemas"))
+            self.cell(uw / 2, 5, c(f"Pagina {self.page_no()}"), align="R")
+
+    pdf = EvidencePDF(format="A4", unit="mm")
+    pdf.set_auto_page_break(auto=True, margin=18)
     pdf.set_margins(18, 18, 18)
     UW = pdf.w - pdf.l_margin - pdf.r_margin  # usable width
 
-    ACCENT   = (124, 92, 255)
-    DARK     = (20, 26, 51)
-    MUTED    = (100, 110, 140)
-    BLACK    = (30, 30, 30)
-    CODE_BG  = (15, 20, 40)
-
     blank_count = 0
+    figure_count = 0
+    pending_figure_number: int | None = None
 
     def new_page():
         pdf.add_page()
-        # faixa de cabecalho discreta
-        pdf.set_fill_color(*DARK)
-        pdf.rect(0, 0, pdf.w, 8, "F")
-        pdf.set_font("Helvetica", "I", 7)
-        pdf.set_text_color(*MUTED)
-        pdf.set_xy(pdf.l_margin, 1.5)
-        pdf.cell(0, 5, c("FIAP · Global Solution 2026.1 · Monitoramento Climatico Espacial"))
-        pdf.set_xy(pdf.l_margin, 12)
+        if pdf.get_y() < 12:
+            pdf.set_y(12)
 
     def ln(h: float = 3.0):
         pdf.ln(h)
+
+    def wrap_by_width(text: str, width: float) -> list[str]:
+        normalized = remove_md_inline(text).strip()
+        if not normalized:
+            return [""]
+        words = normalized.split()
+        lines: list[str] = []
+        cur = words[0]
+        for w in words[1:]:
+            candidate = f"{cur} {w}"
+            if pdf.get_string_width(c(candidate)) <= width:
+                cur = candidate
+            else:
+                lines.append(cur)
+                cur = w
+        lines.append(cur)
+        return lines
+
+    def next_meaningful_block(start_idx: int) -> dict | None:
+        for j in range(start_idx + 1, len(blocks)):
+            bt = blocks[j]["type"]
+            if bt in {"blank", "hr"}:
+                continue
+            return blocks[j]
+        return None
+
+    def min_space_for_heading(level: int, next_blk: dict | None) -> float:
+        heading_base = {1: 28.0, 2: 18.0, 3: 14.0}.get(level, 12.0)
+        if next_blk is None:
+            return heading_base
+
+        next_type = next_blk.get("type", "")
+        next_need = {
+            "image": 88.0,
+            "table": 30.0,
+            "code": 24.0,
+            "paragraph": 14.0,
+            "list_item": 12.0,
+            "quote": 14.0,
+            "heading": 12.0,
+            "caption": 10.0,
+        }.get(next_type, 12.0)
+        return heading_base + next_need
 
     new_page()
 
@@ -204,12 +265,18 @@ def generate(blocks: list[dict]) -> None:
             level = blk["level"]
             text  = remove_md_inline(blk["content"])
 
+            # Regra de paginação (ABNT): evita título isolado no fim da página.
+            next_blk = next_meaningful_block(idx)
+            remaining = pdf.h - pdf.b_margin - pdf.get_y()
+            if remaining < min_space_for_heading(level, next_blk):
+                new_page()
+
             if level == 1:
                 if pdf.get_y() > 30:
                     new_page()
                 # bloco de titulo nivel 1
                 pdf.set_fill_color(*DARK)
-                pdf.rect(pdf.l_margin - 2, pdf.get_y() - 1, UW + 4, 14, "F")
+                pdf.rect(pdf.l_margin - 2, pdf.get_y() - 1, UW + 4, 13, "F")
                 pdf.set_font("Helvetica", "B", 18)
                 pdf.set_text_color(255, 255, 255)
                 pdf.set_x(pdf.l_margin)
@@ -217,8 +284,6 @@ def generate(blocks: list[dict]) -> None:
                 ln(3)
 
             elif level == 2:
-                if pdf.get_y() > pdf.h - 50:
-                    new_page()
                 ln(4)
                 pdf.set_fill_color(*ACCENT)
                 pdf.rect(pdf.l_margin - 2, pdf.get_y(), 3, 8, "F")
@@ -229,8 +294,6 @@ def generate(blocks: list[dict]) -> None:
                 ln(2)
 
             elif level == 3:
-                if pdf.get_y() > pdf.h - 40:
-                    new_page()
                 ln(3)
                 pdf.set_font("Helvetica", "B", 11)
                 pdf.set_text_color(*ACCENT)
@@ -269,11 +332,11 @@ def generate(blocks: list[dict]) -> None:
 
         elif t == "quote":
             text = remove_md_inline(blk["content"])
-            pdf.set_fill_color(230, 225, 255)
+            pdf.set_fill_color(240, 237, 255)
             pdf.set_font("Helvetica", "I", 10)
             pdf.set_text_color(*DARK)
             pdf.set_x(pdf.l_margin)
-            # barra lateral roxa
+            # barra lateral de destaque
             y0 = pdf.get_y()
             pdf.multi_cell(UW, 5.5, c(text), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
             y1 = pdf.get_y()
@@ -283,36 +346,37 @@ def generate(blocks: list[dict]) -> None:
             ln(2)
 
         elif t == "code":
-            lines_code = blk["content"].splitlines() or [""]
-            pdf.set_fill_color(*CODE_BG)
-            pdf.set_text_color(180, 220, 255)
-            pdf.set_font("Courier", "", 8)
-            wrap = 100
-            y0 = pdf.get_y()
-            # fundo
-            estimated_h = len(lines_code) * 4.2 + 6
-            if pdf.get_y() + estimated_h > pdf.h - 20:
-                new_page()
-                y0 = pdf.get_y()
-            pdf.set_fill_color(*CODE_BG)
-            # renderiza linhas
-            for raw in lines_code:
+            raw_lines = blk["content"].splitlines() or [""]
+            wrapped_lines: list[str] = []
+            wrap = 96
+            for raw in raw_lines:
                 if not raw:
-                    pdf.ln(4.2)
+                    wrapped_lines.append("")
                     continue
-                for chunk_i in range(0, len(raw), wrap):
-                    chunk = raw[chunk_i: chunk_i + wrap]
-                    pdf.set_x(pdf.l_margin + 3)
-                    pdf.multi_cell(UW - 3, 4.2, c(chunk), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-            y1 = pdf.get_y()
-            # retangulo de fundo (desenhado sobre o texto — colocar antes)
-            # em fpdf2 nao ha z-index; desenhamos o box antes do texto
-            # solucao: redesenhar com borda visivel ao redor
+                for i in range(0, len(raw), wrap):
+                    wrapped_lines.append(raw[i : i + wrap])
+
+            line_h = 4.3
+            box_h = max(10.0, len(wrapped_lines) * line_h + 4)
+            if pdf.get_y() + box_h > pdf.h - pdf.b_margin:
+                new_page()
+
+            y0 = pdf.get_y()
+            pdf.set_fill_color(*CODE_BG)
             pdf.set_draw_color(*ACCENT)
-            pdf.set_line_width(0.3)
-            pdf.rect(pdf.l_margin - 2, y0 - 2, UW + 4, y1 - y0 + 4)
-            pdf.set_line_width(0.2)
+            pdf.set_line_width(0.25)
+            pdf.rect(pdf.l_margin - 1.5, y0 - 1.2, UW + 3.0, box_h + 2.4, "DF")
+
+            pdf.set_font("Courier", "", 8)
+            pdf.set_text_color(*CODE_TEXT)
+            pdf.set_y(y0 + 1.0)
+            for line in wrapped_lines:
+                pdf.set_x(pdf.l_margin + 1.2)
+                pdf.cell(UW - 2.4, line_h, c(line))
+                pdf.ln(line_h)
+
             pdf.set_text_color(*BLACK)
+            pdf.set_draw_color(0, 0, 0)
             ln(4)
 
         elif t == "table":
@@ -331,15 +395,32 @@ def generate(blocks: list[dict]) -> None:
                     pdf.set_text_color(255, 255, 255)
                     pdf.set_font("Helvetica", "B", 9)
                 else:
-                    fill = (235, 232, 255) if r_idx % 2 == 0 else (245, 245, 255)
+                    fill = (232, 230, 246) if r_idx % 2 == 0 else (242, 242, 250)
                     pdf.set_fill_color(*fill)
                     pdf.set_text_color(*BLACK)
                     pdf.set_font("Helvetica", "", 9)
-                for ci, cell in enumerate(row):
-                    pdf.set_x(pdf.l_margin + ci * col_w)
-                    text = remove_md_inline(cell)
-                    pdf.cell(col_w, 6, c(text), border=0, fill=True)
-                pdf.ln(6)
+
+                padded_row = list(row) + [""] * (n_cols - len(row))
+                max_text_w = col_w - 3.0
+                wrapped_cells = [wrap_by_width(cell, max_text_w) for cell in padded_row]
+                row_h = max(len(lines) for lines in wrapped_cells) * 4.5 + 2.2
+
+                if pdf.get_y() + row_h > pdf.h - pdf.b_margin:
+                    new_page()
+
+                y0 = pdf.get_y()
+                for ci, lines_cell in enumerate(wrapped_cells):
+                    x0 = pdf.l_margin + ci * col_w
+                    pdf.rect(x0, y0, col_w, row_h, "F")
+                    txt_color = (255, 255, 255) if r_idx == 0 else BLACK
+                    pdf.set_text_color(*txt_color)
+                    y_text = y0 + 1.3
+                    for line in lines_cell:
+                        pdf.set_xy(x0 + 1.5, y_text)
+                        pdf.cell(col_w - 3.0, 4.5, c(line))
+                        y_text += 4.5
+                pdf.set_y(y0 + row_h)
+
             pdf.set_text_color(*BLACK)
             ln(3)
 
@@ -372,22 +453,25 @@ def generate(blocks: list[dict]) -> None:
                 available_h = pdf.h - pdf.b_margin - pdf.get_y() - reserve_h
 
             img_w = target_w
-            img_h_expected = None
+            img_h = target_w * 0.56
 
             img_mat = cv2.imread(str(img_path))
             if img_mat is not None:
                 h_px, w_px = img_mat.shape[:2]
                 if w_px > 0 and h_px > 0:
-                    img_h_expected = target_w * (h_px / w_px)
-                    if img_h_expected > available_h:
-                        img_w = available_h * (w_px / h_px)
+                    ratio = h_px / w_px
+                    img_h = target_w * ratio
+                    if img_h > available_h:
+                        img_h = available_h
+                        img_w = img_h / ratio
 
             pdf.set_x(pdf.l_margin + (UW - img_w) / 2)
             try:
                 y_before = pdf.get_y()
-                image_info = pdf.image(str(img_path), x=pdf.get_x(), y=y_before, w=img_w)
-                rendered_h = getattr(image_info, "rendered_height", img_h_expected or 0)
-                pdf.set_y(y_before + rendered_h + 2)
+                pdf.image(str(img_path), x=pdf.get_x(), y=y_before, w=img_w, h=img_h)
+                pdf.set_y(y_before + img_h + 2)
+                figure_count += 1
+                pending_figure_number = figure_count
             except Exception as exc:
                 pdf.set_font("Helvetica", "I", 9)
                 pdf.set_text_color(*MUTED)
@@ -398,26 +482,27 @@ def generate(blocks: list[dict]) -> None:
 
         elif t == "caption":
             text = blk["content"]
-            pdf.set_font("Helvetica", "I", 8.5)
-            pdf.set_text_color(*MUTED)
-            pdf.set_x(pdf.l_margin)
-            pdf.multi_cell(UW, 5, c(text), new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="C")
+            if pending_figure_number is not None:
+                caption_text = f"Figura {pending_figure_number} - {text}"
+                pdf.set_font("Helvetica", "", 9)
+                pdf.set_text_color(*BLACK)
+                pdf.set_x(pdf.l_margin)
+                pdf.multi_cell(UW, 5, c(caption_text), new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="C")
+                pdf.set_font("Helvetica", "I", 8.5)
+                pdf.set_text_color(*MUTED)
+                pdf.set_x(pdf.l_margin)
+                pdf.multi_cell(UW, 4.6, c("Fonte: Elaboracao propria (2026)."), new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="C")
+                pending_figure_number = None
+            else:
+                pdf.set_font("Helvetica", "I", 9)
+                pdf.set_text_color(*MUTED)
+                pdf.set_x(pdf.l_margin)
+                pdf.multi_cell(UW, 5, c(text), new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="C")
             pdf.set_text_color(*BLACK)
             ln(3)
 
-    # rodape nas paginas
-    for page_num in range(1, pdf.page + 1):
-        pdf.page = page_num
-        pdf.set_y(pdf.h - 12)
-        pdf.set_font("Helvetica", "I", 8)
-        pdf.set_text_color(*MUTED)
-        pdf.set_x(pdf.l_margin)
-        pdf.cell(UW / 2, 5, c("FIAP · Global Solution 2026.1 · Analise e Desenvolvimento de Sistemas"))
-        pdf.cell(UW / 2, 5, c(f"Pagina {page_num}"), align="R")
-
-    pdf.page = pdf.pages
     pdf.output(str(PDF_PATH))
-    n_pages = len(pdf.pages)
+    n_pages = pdf.page_no()
     print(f"[OK] PDF gerado: {PDF_PATH.relative_to(ROOT)} ({PDF_PATH.stat().st_size // 1024} KB, {n_pages} paginas)")
 
 

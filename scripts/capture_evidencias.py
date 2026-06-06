@@ -100,24 +100,68 @@ def capture_all() -> dict[str, Path]:
         # ── 3. Aba 02 · ML: treino ──────────────────────────────────
         print("[3] Aba 02 – ML & Predicoes")
         click_tab(page, "02")
-        shots["04_ml_antes"] = shot(page, "04_ml_antes")
+        shots["04_ml_antes"] = shot(page, "04_ml_antes", full=False)
 
         try:
-            click_button(page, "Treinar baseline agora", timeout=30_000)
-            shots["05_ml_depois"] = shot(page, "05_ml_depois")
+            # 1) Aciona o treino
+            train_btn = page.get_by_role("button", name="Treinar baseline agora").first
+            train_btn.click()
+
+            # 2) Captura estado de processamento (spinner) quando visivel
+            try:
+                page.get_by_text("Treinando modelos e selecionando o melhor por MAE").first.wait_for(timeout=4_000)
+                page.wait_for_timeout(300)
+            except PWTimeout:
+                print("  [warn] spinner de treino nao apareceu a tempo; capturando estado corrente")
+
+            # Move o viewport para destacar a area de acao/feedback e evitar print igual ao estado anterior.
+            page.mouse.wheel(0, 520)
+            page.wait_for_timeout(260)
+            shots["05_ml_treino_teste"] = shot(page, "05_ml_treino_teste", full=False)
+
+            # 3) Aguarda conclusao e captura pos-treino com feedback de sucesso
+            try:
+                page.get_by_text("Modelo salvo em").first.wait_for(timeout=45_000)
+            except PWTimeout:
+                print("  [warn] mensagem de sucesso nao encontrada; seguindo com captura pos-treino")
+            page.wait_for_timeout(350)
         except PWTimeout:
             print("  [warn] treino demorou demais; capturando estado atual")
-            shots["05_ml_depois"] = shot(page, "05_ml_depois")
+            shots["05_ml_treino_teste"] = shot(page, "05_ml_treino_teste", full=False)
 
-        # scroll para ver dataset e leaderboard
-        page.evaluate("window.scrollTo(0, document.body.scrollHeight / 2)")
-        page.wait_for_timeout(800)
-        shots["06_ml_dataset"] = shot(page, "06_ml_dataset")
+        # Captura focada nos cards pós-treino (status/modelo/MAE)
+        page.evaluate("window.scrollTo(0, 0)")
+        page.wait_for_timeout(700)
+        shots["06_ml_cards"] = shot(page, "06_ml_cards", full=False)
+
+        # Captura 07: foco em dataset/predicoes
+        try:
+            ds_title = page.get_by_text("Dataset processado (últimas linhas)").first
+            ds_title.scroll_into_view_if_needed(timeout=8_000)
+            page.wait_for_timeout(350)
+            page.mouse.wheel(0, -180)
+            page.wait_for_timeout(250)
+        except PWTimeout:
+            for _ in range(4):
+                page.mouse.wheel(0, 900)
+                page.wait_for_timeout(250)
+        shots["07_ml_quadros"] = shot(page, "07_ml_quadros", full=False)
+
+        # Captura 08: foco no comparativo/leaderboard
+        try:
+            lb_title = page.get_by_text("Comparativo de modelos").first
+            lb_title.scroll_into_view_if_needed(timeout=8_000)
+            page.wait_for_timeout(350)
+        except PWTimeout:
+            for _ in range(3):
+                page.mouse.wheel(0, 850)
+                page.wait_for_timeout(250)
+        shots["08_ml_leaderboard"] = shot(page, "08_ml_leaderboard", full=False)
 
         # ── 4. Aba 03 · Visão Computacional: exemplo embutido ───────
         print("[4] Aba 03 – Visao Computacional")
         click_tab(page, "03")
-        shots["07_vision_antes"] = shot(page, "07_vision_antes")
+        shots["09_vision_antes"] = shot(page, "09_vision_antes")
 
         # Selecionar cenário "overcast" para visibilidade
         try:
@@ -131,44 +175,47 @@ def capture_all() -> dict[str, Path]:
 
         try:
             click_button(page, "Gerar e analisar exemplo", timeout=15_000)
-            shots["08_vision_resultado"] = shot(page, "08_vision_resultado")
+            shots["10_vision_resultado"] = shot(page, "10_vision_resultado")
         except PWTimeout:
-            shots["08_vision_resultado"] = shot(page, "08_vision_resultado")
+            shots["10_vision_resultado"] = shot(page, "10_vision_resultado")
 
         # scroll para grafico de historico
         page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
         page.wait_for_timeout(800)
-        shots["09_vision_historico"] = shot(page, "09_vision_historico")
+        shots["11_vision_historico"] = shot(page, "11_vision_historico")
 
         # ── 5. Aba 04 · API & Stack ─────────────────────────────────
         print("[5] Aba 04 – API & Stack")
         page.evaluate("window.scrollTo(0, 0)")
         click_tab(page, "04")
-        shots["10_api_aba"] = shot(page, "10_api_aba")
+        shots["12_api_aba"] = shot(page, "12_api_aba")
 
         # ── 6. Swagger /docs ────────────────────────────────────────
         print("[6] Swagger /docs")
         page.goto(f"{API_URL}/docs", wait_until="networkidle", timeout=20_000)
         page.wait_for_timeout(2_000)
-        shots["11_swagger"] = shot(page, "11_swagger")
+        shots["13_swagger"] = shot(page, "13_swagger")
 
         # ── 7. /report/summary ──────────────────────────────────────
         print("[7] /report/summary")
         page.goto(f"{API_URL}/report/summary", wait_until="networkidle", timeout=10_000)
         page.wait_for_timeout(800)
-        shots["12_report_json"] = shot(page, "12_report_json")
+        shots["14_report_json"] = shot(page, "14_report_json")
 
         # ── 8. Aba 05 · Relatório ────────────────────────────────────
         print("[8] Aba 05 – Relatorio")
         page.goto(DASH_URL, wait_until="networkidle", timeout=20_000)
         page.wait_for_timeout(WAIT_STREAMLIT)
         click_tab(page, "05")
-        shots["13_relatorio"] = shot(page, "13_relatorio")
+        shots["15_relatorio"] = shot(page, "15_relatorio")
 
         # ── 9. Aba 06 · PDF de Entrega ────────────────────────────────
         print("[9] Aba 06 – PDF de Entrega")
-        click_tab(page, "06")
-        shots["14_pdf_aba"] = shot(page, "14_pdf_aba")
+        try:
+            click_tab(page, "06")
+            shots["16_pdf_aba"] = shot(page, "16_pdf_aba")
+        except PWTimeout:
+            print("  [warn] aba 06 nao encontrada; pulando captura 16_pdf_aba")
 
         browser.close()
 
@@ -263,6 +310,19 @@ def generate_md(shots: dict[str, Path], summary: dict) -> str:
     vision_count = summary.get("vision", {}).get("count", 0)
     rows = summary.get("dataset_rows", "n/a")
 
+    mae_label = f"{mae:.3f}" if isinstance(mae, (int, float)) else str(mae)
+
+    ml_cards_caption = f"Cards atualizados apos treino — status pipeline, melhor modelo e MAE (modelo: {model}, MAE: {mae_label})"
+    ml_quadro_caption = f"Quadros gerados apos treino: dataset processado e predições baseline ({rows} linhas)"
+    vision_hist_caption = f"Historico temporal de analises ({vision_count} registros acumulados)"
+    pdf_section = ""
+    if "16_pdf_aba" in shots:
+        pdf_section = f"""
+### 3.9 Aba 06 · PDF de Entrega
+
+{img("16_pdf_aba", "Aba PDF com formulario preenchivel e gerador de PDF")}
+"""
+
     return f"""\
 # Evidencias de Demonstracao — Global Solution 2026.1
 
@@ -304,37 +364,37 @@ def generate_md(shots: dict[str, Path], summary: dict) -> str:
 
 {img("04_ml_antes", "Aba ML antes do treino")}
 
-{img("05_ml_depois", "Aba ML apos treino — metricas atualizadas (modelo: {model}, MAE: {mae})")}
+{img("05_ml_treino_teste", "Teste funcional no portal: clique em 'Treinar baseline agora' com estado de processamento e feedback visual")}
 
-{img("06_ml_dataset", "Dataset processado, predicoes e leaderboard de modelos ({rows} linhas)")}
+{img("07_ml_quadros", ml_quadro_caption)}
+
+{img("08_ml_leaderboard", "Comparativo de modelos (leaderboard) com selecao automatica do melhor MAE")}
 
 ### 3.4 Aba 03 · Visao Computacional
 
-{img("07_vision_antes", "Aba Visao Computacional — seletor de cenario e botao de exemplo")}
+{img("09_vision_antes", "Aba Visao Computacional — seletor de cenario e botao de exemplo")}
 
-{img("08_vision_resultado", "Resultado da analise sintetica — condicao, risco de chuva e alerta")}
+{img("10_vision_resultado", "Resultado da analise sintetica — condicao, risco de chuva e alerta")}
 
-{img("09_vision_historico", "Historico temporal de analises ({vision_count} registros acumulados)")}
+{img("11_vision_historico", vision_hist_caption)}
 
 ### 3.5 Aba 04 · API & Stack
 
-{img("10_api_aba", "Aba API com lista de endpoints e links Swagger / report/summary")}
+{img("12_api_aba", "Aba API com lista de endpoints e links Swagger / report/summary")}
 
 ### 3.6 Documentacao interativa — Swagger UI
 
-{img("11_swagger", "Swagger UI com todos os endpoints disponiveis em http://127.0.0.1:8000/docs")}
+{img("13_swagger", "Swagger UI com todos os endpoints disponiveis em http://127.0.0.1:8000/docs")}
 
 ### 3.7 Endpoint /report/summary — saida bruta
 
-{img("12_report_json", "Saida JSON de /report/summary consolidando pipeline e visao")}
+{img("14_report_json", "Saida JSON de /report/summary consolidando pipeline e visao")}
 
 ### 3.8 Aba 05 · Relatorio consolidado
 
-{img("13_relatorio", "Aba Relatorio com JSON renderizado e botao de download")}
+{img("15_relatorio", "Aba Relatorio com JSON renderizado e botao de download")}
 
-### 3.9 Aba 06 · PDF de Entrega
-
-{img("14_pdf_aba", "Aba PDF com formulario preenchivel e gerador de PDF")}
+{pdf_section}
 
 ---
 
@@ -400,7 +460,7 @@ def main() -> None:
     MD_PATH.write_text(md, encoding="utf-8")
     print(f"\n[OK] Markdown gerado em {MD_PATH.relative_to(ROOT)}")
     print(f"[OK] {len(shots)} screenshots salvas em {OUT_DIR.relative_to(ROOT)}/")
-    print("\nProximo passo: abra a aba '06 · PDF de Entrega' no dashboard e clique em 'Gerar PDF'.")
+    print("\nProximo passo: gere o PDF final com: python scripts/gerar_pdf_evidencias.py")
 
 
 if __name__ == "__main__":

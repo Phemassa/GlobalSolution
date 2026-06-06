@@ -129,6 +129,29 @@ GET /report/summary
 
 ---
 
+## Evidencias e PDF final
+
+Fluxo recomendado para gerar as evidencias visuais do portal e o PDF academico consolidado:
+
+```bash
+source .venv/bin/activate
+python scripts/capture_evidencias.py
+python scripts/gerar_pdf_evidencias.py
+```
+
+Arquivos gerados/atualizados nesse processo:
+
+- `assets/evidencias/*.png` (capturas automaticas do dashboard e API)
+- `docs/EVIDENCIAS.md` (narrativa com prints e legenda)
+- `docs/GS2026_EVIDENCIAS.pdf` (documento final para entrega)
+
+Observacoes:
+
+- A secao de ML (Aba 02) foi estruturada para evidenciar progressao real: antes do treino, acao/processamento, quadros gerados e comparativo de modelos.
+- O PDF aplica formatacao academica com legenda numerada de figuras e fonte abaixo das imagens.
+
+---
+
 ## Entregaveis academicos
 
 - Video (YouTube nao listado) com ate 5 minutos

@@ -246,7 +246,20 @@ div[data-testid="stMetric"] {
 	box-shadow: 0 8px 22px rgba(0,0,0,0.25);
 }
 div[data-testid="stMetricLabel"] {color: var(--muted) !important; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;}
-div[data-testid="stMetricValue"] {color: #FFFFFF !important; font-weight: 700;}
+div[data-testid="stMetricValue"] {
+	color: #FFFFFF !important;
+	font-weight: 700;
+	font-size: clamp(1rem, 1.5vw, 1.35rem) !important;
+	line-height: 1.25 !important;
+	white-space: normal !important;
+	word-break: break-word;
+}
+
+@media (max-width: 900px) {
+	div[data-testid="stMetric"] {padding: 12px 12px;}
+	div[data-testid="stMetricLabel"] {font-size: 11px;}
+	div[data-testid="stMetricValue"] {font-size: 1rem !important;}
+}
 
 .stTabs [data-baseweb="tab-list"] {gap: 8px;}
 .stTabs [data-baseweb="tab"] {
@@ -507,6 +520,10 @@ with tab_vision:
 			index=1,
 			help="Cada cenario produz uma imagem sintetica com cobertura de nuvens crescente.",
 		)
+		last_scene = st.session_state.get("vision_demo_scene_selected")
+		if last_scene != scene:
+			st.session_state["vision_demo_scene_selected"] = scene
+			st.session_state.pop("vision_demo_bytes", None)
 		cols = st.columns([1, 1])
 		with cols[0]:
 			if st.button(
@@ -547,6 +564,8 @@ with tab_vision:
 					st.json(demo_result, expanded=False)
 				except ValueError as exc:
 					st.error(f"Falha na analise da imagem: {exc}")
+		else:
+			st.caption("Selecione o cenario e clique em 'Gerar e analisar exemplo'.")
 
 	st.divider()
 	st.markdown("**Ou envie uma imagem real**")
