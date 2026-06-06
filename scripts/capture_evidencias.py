@@ -27,6 +27,8 @@ MD_PATH = ROOT / "docs" / "EVIDENCIAS.md"
 
 DASH_URL = "http://127.0.0.1:8501"
 API_URL  = "http://127.0.0.1:8000"
+VIDEO_URL = "https://youtu.be/rm0EsPsH7XI"
+REPO_URL = "https://github.com/Phemassa/GlobalSolution"
 WAIT_STREAMLIT = 4_000   # ms aguardar carregamento inicial
 WAIT_ACTION    = 3_500   # ms aguardar apos clicar em botao
 VIEWPORT = {"width": 1440, "height": 900}
@@ -420,7 +422,8 @@ def generate_md(shots: dict[str, Path], summary: dict) -> str:
 
 ## 7. Link do video
 
-*(Cole o link apos publicar no YouTube nao listado)*
+- Video no YouTube (nao listado): {VIDEO_URL}
+- Repositorio GitHub: {REPO_URL}
 
 ---
 

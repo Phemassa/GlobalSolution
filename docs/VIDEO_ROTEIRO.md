@@ -26,4 +26,6 @@
 ## 4. Fechamento (4:40 - 5:00)
 - Conclusoes
 - Proximos passos (IoT real, dados satelitais adicionais, deploy cloud)
-- Link do repositorio e convite para perguntas
+- Link do repositorio: https://github.com/Phemassa/GlobalSolution
+- Link do video (YouTube nao listado): https://youtu.be/rm0EsPsH7XI
+- Convite para perguntas

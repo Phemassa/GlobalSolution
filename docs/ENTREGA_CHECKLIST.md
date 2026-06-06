@@ -45,3 +45,7 @@
 - [ ] Conferir se os integrantes estao no README
 - [ ] Conferir se o repositorio esta atualizado no branch main
 - [ ] Conferir se o PDF final contem todos os links clicaveis
+
+## 7. Referencias finais desta entrega
+- Repositorio GitHub: https://github.com/Phemassa/GlobalSolution
+- Video YouTube (nao listado): https://youtu.be/rm0EsPsH7XI

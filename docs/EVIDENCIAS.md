@@ -105,8 +105,8 @@ sintetico embutido na aba de Visao Computacional e gerador de PDF de entrega na 
 *Resultado da analise sintetica — condicao, risco de chuva e alerta*
 
 
-![Historico temporal de analises (40 registros acumulados)](../assets/evidencias/11_vision_historico.png)
-*Historico temporal de analises (40 registros acumulados)*
+![Historico temporal de analises (69 registros acumulados)](../assets/evidencias/11_vision_historico.png)
+*Historico temporal de analises (69 registros acumulados)*
 
 
 ### 3.5 Aba 04 · API & Stack
@@ -155,9 +155,9 @@ sintetico embutido na aba de Visao Computacional e gerador de PDF de entrega na 
     "target_pred": 16.03558804009505
   },
   "vision": {
-    "count": 40,
-    "avg_cloudiness": 76.45,
-    "avg_rain_risk": 73.42,
+    "count": 69,
+    "avg_cloudiness": 69.8,
+    "avg_rain_risk": 67.11,
     "last_condition": "overcast",
     "last_alert": "high"
   }
@@ -194,7 +194,8 @@ A arquitetura modular facilita a evolucao incremental sem retrabalho de componen
 
 ## 7. Link do video
 
-*(Cole o link apos publicar no YouTube nao listado)*
+- Video no YouTube (nao listado): https://youtu.be/rm0EsPsH7XI
+- Repositorio GitHub: https://github.com/Phemassa/GlobalSolution
 
 ---
 

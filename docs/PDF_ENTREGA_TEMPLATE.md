@@ -29,8 +29,8 @@
 - Proximas evolucoes
 
 ## 6. Links obrigatorios
-- Repositorio GitHub
-- Video no YouTube (nao listado)
+- Repositorio GitHub: https://github.com/Phemassa/GlobalSolution
+- Video no YouTube (nao listado): https://youtu.be/rm0EsPsH7XI
 
 ## 7. Checklist final
 - Nada de screenshot de codigo

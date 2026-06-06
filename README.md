@@ -55,7 +55,8 @@ O objetivo e demonstrar um fluxo completo de dados e IA: ingestao, preparo, trei
 ## Demonstracao em video
 
 - Roteiro: [docs/VIDEO_ROTEIRO.md](docs/VIDEO_ROTEIRO.md)
-- Link final do YouTube (nao listado): pendente de publicacao
+- Link final do YouTube (nao listado): https://youtu.be/rm0EsPsH7XI
+- Repositorio do projeto: https://github.com/Phemassa/GlobalSolution
 
 ---
 
